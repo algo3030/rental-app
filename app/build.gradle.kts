@@ -20,7 +20,15 @@ android {
     }
 
     buildTypes {
+        debug{
+            buildConfigField("String", "SUPABASE_URL", "\"${project.findProperty("supabase.dev.url")}\"")
+            buildConfigField("String", "SUPABASE_KEY", "\"${project.findProperty("supabase.dev.publishableKey")}\"")
+        }
+
         release {
+            buildConfigField("String", "SUPABASE_URL", "\"${project.findProperty("supabase.prod.url")}\"")
+            buildConfigField("String", "SUPABASE_KEY", "\"${project.findProperty("supabase.prod.publishableKey")}\"")
+
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -38,6 +46,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -68,9 +77,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    testImplementation(libs.kotlinx.coroutines.test)
 
     // supabase and Internet connection
-    implementation(libs.supabase.bom)
+    implementation(platform(libs.supabase.bom))
     implementation(libs.postgrest.kt)
     implementation(libs.ktor.client.android)
 }
