@@ -1,0 +1,66 @@
+package com.example.rentalapp.ui.screen.home
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.example.rentalapp.model.RentalStatus
+import com.example.rentalapp.ui.component.RentalStatusCard
+import com.example.rentalapp.ui.designsystem.AppTheme
+import com.example.rentalapp.ui.designsystem.components.Button
+import com.example.rentalapp.ui.designsystem.components.ButtonVariant
+import com.example.rentalapp.ui.designsystem.components.Icon
+import com.example.rentalapp.ui.designsystem.components.IconButton
+import com.example.rentalapp.ui.designsystem.components.Text
+
+@Composable
+fun HomeScreen(
+    rentalStatus: RentalStatus
+){
+    HomeScreenLayout(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = AppTheme.colors.background),
+        top = {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(15.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ){
+                Text(
+                    text = "RentalApp",
+                    style = AppTheme.typography.h1
+                )
+            }
+        },
+        center = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                RentalStatusCard(
+                    modifier = Modifier.size(300.dp, 170.dp),
+                    status = rentalStatus
+                )
+
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Button(
+                    variant = ButtonVariant.Primary
+                ) {
+                    Text(
+                        text = "貸出申請を行う",
+                    )
+                }
+            }
+        }
+    )
+}

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,7 +25,7 @@ fun RentalStatusCard(
     Column(
         modifier = modifier
             .background(
-                color = Color.White,
+                color = status.toColor(),
                 shape = RoundedCornerShape(10.dp)
             )
             .padding(10.dp),
@@ -56,4 +57,9 @@ fun RentalStatusCard(
 fun RentalStatus.asDisplayString(): String = when (this) {
     is RentalStatus.Renting -> "レンタル中"
     RentalStatus.Unrented -> "未レンタル"
+}
+
+fun RentalStatus.toColor(): Color = when(this){
+    RentalStatus.Unrented -> Color.Gray
+    is RentalStatus.Renting -> Color.Cyan
 }
