@@ -23,9 +23,17 @@ import com.example.rentalapp.ui.designsystem.components.ButtonVariant
 import com.example.rentalapp.ui.designsystem.components.Text
 import com.example.rentalapp.ui.designsystem.components.textfield.OutlinedTextField
 import com.example.rentalapp.ui.designsystem.components.textfield.TextField
+import kotlinx.serialization.Serializable
+import kotlin.math.log
+
+@Serializable
+object Login
 
 @Composable
-fun LoginScreen(){
+fun LoginScreen(
+    login: (email: String, password: String) -> Unit,
+    navigateToSignUp: () -> Unit
+){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -52,7 +60,8 @@ fun LoginScreen(){
             value = email,
             onValueChange = {
                 email = it
-            }
+            },
+            maxLines = 1
         )
 
         Spacer(Modifier.height(10.dp))
@@ -69,7 +78,8 @@ fun LoginScreen(){
             onValueChange = {
                 password = it
             },
-            keyboardActions = KeyboardActions.Default
+            keyboardActions = KeyboardActions.Default,
+            maxLines = 1
         )
 
         Spacer(Modifier.height(20.dp))
@@ -78,7 +88,10 @@ fun LoginScreen(){
             variant = ButtonVariant.Primary,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .fillMaxWidth(0.8f)
+                .fillMaxWidth(0.8f),
+            onClick ={
+                login(email, password)
+            }
         ){
             Text(
                 text = "Sign In",
@@ -90,7 +103,10 @@ fun LoginScreen(){
 
         Button(
             variant = ButtonVariant.Ghost,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            onClick = {
+                navigateToSignUp()
+            }
         ){
             Text(
                 text = "Create Account",

@@ -6,5 +6,8 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 private fun Default(){
-    LoginScreen()
+    LoginScreen(
+        login = {email, pass -> },
+        navigateToSignUp = {}
+    )
 }

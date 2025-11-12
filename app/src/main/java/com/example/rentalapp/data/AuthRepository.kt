@@ -12,7 +12,8 @@ class AuthRepository(
         password: String
     ){
         supabase.auth.signUpWith(Email){
-
+            this.email = email
+            this.password = password
         }
     }
 }

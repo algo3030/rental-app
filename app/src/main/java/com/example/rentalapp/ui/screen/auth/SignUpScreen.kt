@@ -26,9 +26,15 @@ import com.example.rentalapp.ui.designsystem.components.IconButton
 import com.example.rentalapp.ui.designsystem.components.Text
 import com.example.rentalapp.ui.designsystem.components.textfield.OutlinedTextField
 import com.example.rentalapp.ui.designsystem.components.textfield.TextField
+import kotlinx.serialization.Serializable
+
+@Serializable
+object SignUp
 
 @Composable
-fun SignUpScreen(){
+fun SignUpScreen(
+    signUp: (email: String, password: String) -> Unit
+){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -55,7 +61,8 @@ fun SignUpScreen(){
             value = email,
             onValueChange = {
                 email = it
-            }
+            },
+            maxLines = 1
         )
 
         Spacer(Modifier.height(10.dp))
@@ -72,7 +79,8 @@ fun SignUpScreen(){
             onValueChange = {
                 password = it
             },
-            keyboardActions = KeyboardActions.Default
+            keyboardActions = KeyboardActions.Default,
+            maxLines = 1
         )
 
         Spacer(Modifier.height(10.dp))
@@ -89,7 +97,8 @@ fun SignUpScreen(){
             onValueChange = {
                 passwordConfirm = it
             },
-            keyboardActions = KeyboardActions.Default
+            keyboardActions = KeyboardActions.Default,
+            maxLines = 1
         )
 
         Spacer(Modifier.height(20.dp))
@@ -98,7 +107,10 @@ fun SignUpScreen(){
             variant = ButtonVariant.Primary,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .fillMaxWidth(0.8f)
+                .fillMaxWidth(0.8f),
+            onClick = {
+                signUp(email,password)
+            }
         ){
             Text(
                 text = "Sign Up",

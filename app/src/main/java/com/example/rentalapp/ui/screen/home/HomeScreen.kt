@@ -22,10 +22,15 @@ import com.example.rentalapp.ui.designsystem.components.ButtonVariant
 import com.example.rentalapp.ui.designsystem.components.Icon
 import com.example.rentalapp.ui.designsystem.components.IconButton
 import com.example.rentalapp.ui.designsystem.components.Text
+import com.example.rentalapp.ui.screen.home.logic.HomeScreenUiState
+import kotlinx.serialization.Serializable
+
+@Serializable
+object Home
 
 @Composable
 fun HomeScreen(
-    rentalStatus: RentalStatus
+    state: HomeScreenUiState
 ){
     HomeScreenLayout(
         modifier = Modifier
@@ -48,7 +53,7 @@ fun HomeScreen(
             ) {
                 RentalStatusCard(
                     modifier = Modifier.size(300.dp, 170.dp),
-                    status = rentalStatus
+                    status = state.rentalStatus
                 )
 
                 Spacer(modifier = Modifier.height(30.dp))

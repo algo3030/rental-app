@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -78,9 +80,26 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.core)
+    implementation(libs.androidx.junit.ktx)
 
     // supabase and Internet connection
     implementation(platform(libs.supabase.bom))
-    implementation(libs.postgrest.kt)
+    implementation(libs.supabase.postgrest)
+    implementation(libs.supabase.auth)
     implementation(libs.ktor.client.android)
+
+    // navigation
+    implementation(libs.androidx.navigation.compose)
+
+    // ksp
+    ksp(libs.hilt.android.compiler)
+
+    // hilt
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+
+    // logging
+    implementation(libs.timber)
 }

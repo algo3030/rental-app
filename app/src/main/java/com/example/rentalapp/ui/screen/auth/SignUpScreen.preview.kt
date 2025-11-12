@@ -5,6 +5,8 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-private fun Default(){
-    SignUpScreen()
+private fun Default() {
+    SignUpScreen(
+        signUp = { _, _ -> }
+    )
 }
