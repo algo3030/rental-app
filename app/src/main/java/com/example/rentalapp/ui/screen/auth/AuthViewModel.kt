@@ -2,39 +2,43 @@ package com.example.rentalapp.ui.screen.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.rentalapp.ui.ErrorHost
+import com.example.rentalapp.ui.Message
+import com.example.rentalapp.ui.commonExceptionHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
-import io.github.jan.supabase.auth.status.SessionStatus
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val supabase: SupabaseClient
-): ViewModel() {
+    private val supabase: SupabaseClient,
+    private val errorHost: ErrorHost
+) : ViewModel() {
     val sessionState = supabase.auth.sessionStatus
+    private val exceptionHandler = commonExceptionHandler(errorHost)
 
     fun signUp(
         email: String,
         password: String
-    ){
-        viewModelScope.launch {
-            supabase.auth.signUpWith(Email){
+    ) {
+        viewModelScope.launch(exceptionHandler) {
+            supabase.auth.signUpWith(Email) {
                 this.email = email
                 this.password = password
             }
+            errorHost.emit(Message.String("Signed up!"))
         }
     }
 
     fun signIn(
         email: String,
         password: String
-    ){
-        viewModelScope.launch {
-            supabase.auth.signInWith(Email){
+    ) {
+        viewModelScope.launch(exceptionHandler) {
+            supabase.auth.signInWith(Email) {
                 this.email = email
                 this.password = password
             }

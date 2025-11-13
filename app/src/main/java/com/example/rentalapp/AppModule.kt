@@ -1,7 +1,6 @@
-package com.example.rentalapp.data
+package com.example.rentalapp
 
-import com.example.rentalapp.BuildConfig
-import dagger.Binds
+import com.example.rentalapp.ui.ErrorHost
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -10,11 +9,13 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object SupabaseModule {
+object AppModule {
     @Provides
+    @Singleton
     fun provideSupabaseClient(): SupabaseClient{
         val supabaseUrl = BuildConfig.SUPABASE_URL
         val supabaseKey = BuildConfig.SUPABASE_KEY
@@ -27,4 +28,8 @@ object SupabaseModule {
             install(Auth)
         }
     }
+
+    @Provides
+    @Singleton
+    fun provideErrorHost(): ErrorHost = ErrorHost()
 }
