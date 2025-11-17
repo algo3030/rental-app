@@ -10,16 +10,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val supabase: SupabaseClient,
-    private val messageHost: MessageHost
+    private val messageHost: MessageHost,
+    private val exceptionHandler: CoroutineExceptionHandler
 ) : ViewModel() {
     val sessionState = supabase.auth.sessionStatus
-    private val exceptionHandler = commonExceptionHandler(messageHost)
 
     fun signUp(
         email: String,

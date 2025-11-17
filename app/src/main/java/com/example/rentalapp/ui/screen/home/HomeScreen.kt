@@ -25,15 +25,20 @@ import com.example.rentalapp.ui.designsystem.components.Icon
 import com.example.rentalapp.ui.designsystem.components.IconButton
 import com.example.rentalapp.ui.designsystem.components.IconButtonVariant
 import com.example.rentalapp.ui.designsystem.components.Text
+import com.example.rentalapp.ui.screen.home.logic.DisplayStatus
 import com.example.rentalapp.ui.screen.home.logic.HomeScreenUiState
+import com.example.rentalapp.ui.screen.home.logic.RentalStatus
 import kotlinx.serialization.Serializable
 
 @Serializable
 object HomeScreen
 
+// TODO: sealedでイベントまとめる
 @Composable
 fun HomeScreen(
     onRefresh: () -> Unit,
+    onCancel: () -> Unit,
+    onRental: () -> Unit,
     state: HomeScreenUiState
 ){
     HomeScreenLayout(
@@ -82,13 +87,31 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(30.dp))
 
-                Button(
-                    variant = ButtonVariant.Primary
-                ) {
-                    Text(
-                        text = "貸出申請を行う",
-                    )
+                when(state.rentalStatus){
+                    RentalStatus.NoRental -> {
+                        Button(
+                            variant = ButtonVariant.Primary,
+                            onClick = onRental
+                        ) {
+                            Text(
+                                text = "貸出申請を行う",
+                            )
+                        }
+                    }
+                    is RentalStatus.Active -> {
+                        if(state.rentalStatus.request.status == DisplayStatus.PENDING){
+                            Button(
+                                variant = ButtonVariant.Primary,
+                                onClick = onCancel
+                            ) {
+                                Text(
+                                    text = "キャンセルする",
+                                )
+                            }
+                        }
+                    }
                 }
+
             }
         }
     )

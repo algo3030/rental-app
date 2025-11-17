@@ -16,8 +16,8 @@ private fun HomeScreenPreview(
         state = HomeScreenUiState(
             rentalStatus = status
         ),
-        onRefresh = {
-
-        }
+        onRefresh = {},
+        onCancel = {},
+        onRental = {}
     )
 }

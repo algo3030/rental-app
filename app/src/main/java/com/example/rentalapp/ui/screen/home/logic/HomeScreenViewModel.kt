@@ -5,10 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.rentalapp.data.RentalRepository
 import com.example.rentalapp.model.RentalRequest
 import com.example.rentalapp.model.RentalRequestStatus
+import com.example.rentalapp.ui.MessageHost
+import com.example.rentalapp.ui.Success
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.storage.storage
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -18,8 +21,10 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val rentalRepository: RentalRepository,
-    private val supabase: SupabaseClient
-): ViewModel() {
+    private val supabase: SupabaseClient,
+    private val messageHost: MessageHost,
+    private val exceptionHandler: CoroutineExceptionHandler
+) : ViewModel() {
     val _state = MutableStateFlow<HomeScreenUiState>(HomeScreenUiState())
     val state = _state.asStateFlow()
 
@@ -31,21 +36,36 @@ class HomeScreenViewModel @Inject constructor(
         loadActiveRental()
     }
 
-    private fun loadActiveRental() {
+    fun cancelCurrentRequest() {
+        require(state.value.rentalStatus is RentalStatus.Active)
+        val requestId = (state.value.rentalStatus as RentalStatus.Active).request.id
+
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
 
-            val userId = supabase.auth.currentUserOrNull()?.id
-
-            if (userId == null) {
-                _state.update {
-                    it.copy(
-                        rentalStatus = RentalStatus.NoRental,
-                        isLoading = false
-                    )
+            rentalRepository.cancelRequest(requestId)
+                .onSuccess {
+                    messageHost.emit(Success.String("Rental request canceled."))
+                    loadActiveRental()
                 }
-                return@launch
-            }
+                .onFailure { e ->
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = e.message
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun loadActiveRental() {
+        viewModelScope.launch(exceptionHandler) {
+            _state.update { it.copy(isLoading = true) }
+
+            val userId = supabase.auth.currentUserOrNull()?.id
+            if (userId == null) return@launch
+
 
             runCatching {
                 rentalRepository.getActiveRental(userId)

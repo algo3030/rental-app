@@ -7,6 +7,7 @@ import com.example.rentalapp.model.RentalRequest
 import com.example.rentalapp.model.RentalRequestStatus
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.storage.storage
 import java.time.Instant
 import javax.inject.Inject
 
@@ -37,6 +38,53 @@ class RentalRepository @Inject constructor(
         }
     }
 
+    // 新規追加: 利用可能なPC一覧を取得
+    suspend fun getAvailablePcs(): List<Pc> {
+        val pcDtos = supabase.from("pcs")
+            .select {
+                filter {
+                    eq("status", "available")
+                }
+            }
+            .decodeList<PcDto>()
+
+        return pcDtos.map { it.toDomainModel() }
+    }
+
+    // 新規追加: レンタル申請を作成
+    suspend fun createRentalRequest(
+        userId: String,
+        pcId: String,
+        startTime: Instant,
+        endTime: Instant
+    ): Result<RentalRequest> {
+        return runCatching {
+            val dto = supabase.from("rental_requests")
+                .insert(
+                    mapOf(
+                        "user_id" to userId,
+                        "pc_id" to pcId,
+                        "start_time" to startTime.toString(),
+                        "end_time" to endTime.toString(),
+                        "status" to "pending"
+                    )
+                ) {
+                    select()
+                }
+                .decodeSingle<RentalRequestDto>()
+
+            dto.toDomainModel()
+        }
+    }
+
+    // 新規追加: 画像URLを取得
+    fun getPcImageUrl(imagePath: String?): String? {
+        return imagePath?.let { path ->
+            supabase.storage.from("pc-images").publicUrl(path)
+        }
+    }
+
+
     private suspend fun RentalRequestDto.toDomainModel(): RentalRequest {
         val pc = fetchPc(pcId)
 
@@ -53,6 +101,19 @@ class RentalRepository @Inject constructor(
             cancelledAt = cancelledAt?.let { Instant.parse(it) }
         )
     }
+
+    private suspend fun PcDto.toDomainModel(): Pc {
+        val model = fetchPcModel(modelId)
+
+        return Pc(
+            id = id,
+            model = model,
+            pcNumber = pcNumber,
+            serialNumber = serialNumber,
+            status = status.toPcStatus()
+        )
+    }
+
 
     private suspend fun fetchPc(pcId: String): Pc {
         val pcDto = supabase.from("pcs")

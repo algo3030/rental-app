@@ -2,6 +2,7 @@ package com.example.rentalapp
 
 import com.example.rentalapp.data.RentalRepository
 import com.example.rentalapp.ui.MessageHost
+import com.example.rentalapp.ui.commonExceptionHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,6 +12,7 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
+import kotlinx.coroutines.CoroutineExceptionHandler
 import javax.inject.Singleton
 
 @Module
@@ -40,5 +42,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideErrorHost(): MessageHost = MessageHost()
+    fun provideMessageHost(): MessageHost = MessageHost()
+
+    @Provides
+    @Singleton
+    fun provideCommonExceptionHandler(
+        messageHost: MessageHost
+    ): CoroutineExceptionHandler = commonExceptionHandler(messageHost)
 }

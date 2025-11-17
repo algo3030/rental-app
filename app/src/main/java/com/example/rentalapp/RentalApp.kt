@@ -24,6 +24,8 @@ import com.example.rentalapp.ui.screen.error.ErrorScreen
 import com.example.rentalapp.ui.screen.home.HomeScreen
 import com.example.rentalapp.ui.screen.home.logic.HomeScreenViewModel
 import com.example.rentalapp.ui.screen.loading.LoadingScreen
+import com.example.rentalapp.ui.screen.rental.RentalScreen
+import com.example.rentalapp.ui.screen.rental.logic.RentalScreenViewModel
 import io.github.jan.supabase.auth.status.SessionStatus
 
 @Composable
@@ -102,12 +104,43 @@ fun RentalApp(
             composable<HomeScreen> {
                 val viewModel: HomeScreenViewModel = hiltViewModel()
 
+                LaunchedEffect(Unit) { viewModel.refresh() }
+
                 val state = viewModel.state.collectAsStateWithLifecycle().value
                 HomeScreen(
                     state = state,
                     onRefresh = {
                         viewModel.refresh()
-                    })
+                    },
+                    onCancel = {
+                        viewModel.cancelCurrentRequest()
+                    },
+                    onRental = {
+                        navController.navigate(RentalScreen)
+                    }
+                )
+            }
+
+            composable<RentalScreen> {
+                val viewModel: RentalScreenViewModel = hiltViewModel()
+                val state = viewModel.state.collectAsStateWithLifecycle().value
+
+                RentalScreen(
+                    state = state,
+                    onNavigateBack = { navController.popBackStack() },
+                    onSelectPc = {
+                        viewModel.onPcSelected(it)
+                    },
+                    onStartTimeSelected = {
+                        viewModel.onStartTimeSelected(it)
+                    },
+                    onEndTimeSelected = {
+                        viewModel.onEndTimeSelected(it)
+                    },
+                    onSubmit = {
+                        viewModel.onSubmitRequest()
+                    },
+                )
             }
         }
     }
