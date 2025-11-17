@@ -12,6 +12,7 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,6 +27,8 @@ class AuthViewModel @Inject constructor(
         email: String,
         password: String
     ) {
+        Timber.d("Signing up with: email: $email, password: $password")
+
         viewModelScope.launch(exceptionHandler) {
             supabase.auth.signUpWith(Email) {
                 this.email = email
@@ -39,6 +42,8 @@ class AuthViewModel @Inject constructor(
         email: String,
         password: String
     ) {
+        Timber.d("Signing in with: email: $email, password: $password")
+
         viewModelScope.launch(exceptionHandler) {
             supabase.auth.signInWith(Email) {
                 this.email = email

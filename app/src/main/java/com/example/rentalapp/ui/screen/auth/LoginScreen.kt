@@ -16,6 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.rentalapp.ui.designsystem.AppTheme
 import com.example.rentalapp.ui.designsystem.components.Button
@@ -72,7 +74,8 @@ fun LoginScreen(
                     style = AppTheme.typography.label1
                 )
             },
-            value = "●".repeat(password.length),
+            visualTransformation = remember { PasswordVisualTransformation() },
+            value = password,
             onValueChange = {
                 password = it
             },
