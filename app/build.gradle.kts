@@ -88,6 +88,7 @@ dependencies {
     implementation(platform(libs.supabase.bom))
     implementation(libs.supabase.postgrest)
     implementation(libs.supabase.auth)
+    implementation(libs.supabase.storage)
     implementation(libs.ktor.client.android)
 
     // navigation
@@ -100,6 +101,16 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    // splash-screen
+    implementation(libs.androidx.core.splashscreen)
+
     // logging
     implementation(libs.timber)
+
+    // coil
+    implementation(libs.coil.network)
+    implementation(libs.coil.compose)
+
+    // icon
+    implementation(libs.androidx.material.icons.extended)
 }

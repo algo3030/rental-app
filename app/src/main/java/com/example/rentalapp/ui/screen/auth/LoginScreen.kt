@@ -22,12 +22,10 @@ import com.example.rentalapp.ui.designsystem.components.Button
 import com.example.rentalapp.ui.designsystem.components.ButtonVariant
 import com.example.rentalapp.ui.designsystem.components.Text
 import com.example.rentalapp.ui.designsystem.components.textfield.OutlinedTextField
-import com.example.rentalapp.ui.designsystem.components.textfield.TextField
 import kotlinx.serialization.Serializable
-import kotlin.math.log
 
 @Serializable
-object Login
+object LoginScreen
 
 @Composable
 fun LoginScreen(

@@ -8,16 +8,16 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class ErrorHost {
-    private val _error = MutableSharedFlow<Message>()
-    val error = _error.asSharedFlow()
+class MessageHost {
+    private val _msg = MutableSharedFlow<Message>()
+    val msg = _msg.asSharedFlow()
 
     private val scope = CoroutineScope(Dispatchers.Default)
 
     fun emit(message: Message) {
         Timber.d("Emitting error: $message")
         scope.launch {
-            _error.emit(message)
+            _msg.emit(message)
         }
     }
 }
@@ -28,12 +28,11 @@ sealed interface Error : Message {
     data class String(val msg: kotlin.String) : Error
     data object Unknown : Error
 }
-sealed interface Info : Message{
-    data class String(val msg: kotlin.String) : Info
+sealed interface Success : Message{
+    data class String(val msg: kotlin.String) : Success
 }
 
-
-fun commonExceptionHandler(messageHost: ErrorHost) = CoroutineExceptionHandler { _, e ->
+fun commonExceptionHandler(messageHost: MessageHost) = CoroutineExceptionHandler { _, e ->
     val error: Message = if (e.message.isNullOrBlank()) {
         Error.Unknown
     } else {

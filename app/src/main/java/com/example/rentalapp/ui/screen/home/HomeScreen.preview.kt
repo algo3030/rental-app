@@ -3,9 +3,9 @@ package com.example.rentalapp.ui.screen.home
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import com.example.rentalapp.model.RentalStatus
 import com.example.rentalapp.ui.component.RentalStatusPPP
 import com.example.rentalapp.ui.screen.home.logic.HomeScreenUiState
+import com.example.rentalapp.ui.screen.home.logic.RentalStatus
 
 @Composable
 @Preview
@@ -16,5 +16,8 @@ private fun HomeScreenPreview(
         state = HomeScreenUiState(
             rentalStatus = status
         ),
+        onRefresh = {
+
+        }
     )
 }

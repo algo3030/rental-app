@@ -2,8 +2,9 @@ package com.example.rentalapp.ui.screen.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.rentalapp.ui.ErrorHost
+import com.example.rentalapp.ui.MessageHost
 import com.example.rentalapp.ui.Message
+import com.example.rentalapp.ui.Success
 import com.example.rentalapp.ui.commonExceptionHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.SupabaseClient
@@ -15,10 +16,10 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val supabase: SupabaseClient,
-    private val errorHost: ErrorHost
+    private val messageHost: MessageHost
 ) : ViewModel() {
     val sessionState = supabase.auth.sessionStatus
-    private val exceptionHandler = commonExceptionHandler(errorHost)
+    private val exceptionHandler = commonExceptionHandler(messageHost)
 
     fun signUp(
         email: String,
@@ -29,7 +30,7 @@ class AuthViewModel @Inject constructor(
                 this.email = email
                 this.password = password
             }
-            errorHost.emit(Message.String("Signed up!"))
+            messageHost.emit(Success.String("Signed up!"))
         }
     }
 

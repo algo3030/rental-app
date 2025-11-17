@@ -1,6 +1,7 @@
 package com.example.rentalapp
 
-import com.example.rentalapp.ui.ErrorHost
+import com.example.rentalapp.data.RentalRepository
+import com.example.rentalapp.ui.MessageHost
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -9,6 +10,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.storage.Storage
 import javax.inject.Singleton
 
 @Module
@@ -26,10 +28,17 @@ object AppModule {
         ){
             install(Postgrest)
             install(Auth)
+            install(Storage)
         }
     }
 
     @Provides
     @Singleton
-    fun provideErrorHost(): ErrorHost = ErrorHost()
+    fun provideRentalRepository(
+        supabase: SupabaseClient
+    ): RentalRepository = RentalRepository(supabase)
+
+    @Provides
+    @Singleton
+    fun provideErrorHost(): MessageHost = MessageHost()
 }

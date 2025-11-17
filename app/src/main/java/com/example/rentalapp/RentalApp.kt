@@ -11,41 +11,47 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.rentalapp.ui.Error
-import com.example.rentalapp.ui.ErrorHost
-import com.example.rentalapp.ui.Info
-import com.example.rentalapp.ui.Message
+import com.example.rentalapp.ui.MessageHost
+import com.example.rentalapp.ui.Success
 import com.example.rentalapp.ui.designsystem.components.Scaffold
 import com.example.rentalapp.ui.designsystem.components.snackbar.SnackbarDuration
 import com.example.rentalapp.ui.designsystem.components.snackbar.SnackbarHost
 import com.example.rentalapp.ui.designsystem.components.snackbar.SnackbarHostState
 import com.example.rentalapp.ui.screen.auth.AuthViewModel
-import com.example.rentalapp.ui.screen.auth.Login
 import com.example.rentalapp.ui.screen.auth.LoginScreen
-import com.example.rentalapp.ui.screen.auth.SignUp
 import com.example.rentalapp.ui.screen.auth.SignUpScreen
-import com.example.rentalapp.ui.screen.home.Home
+import com.example.rentalapp.ui.screen.error.ErrorScreen
 import com.example.rentalapp.ui.screen.home.HomeScreen
 import com.example.rentalapp.ui.screen.home.logic.HomeScreenViewModel
+import com.example.rentalapp.ui.screen.loading.LoadingScreen
 import io.github.jan.supabase.auth.status.SessionStatus
-import kotlinx.coroutines.flow.filter
 
 @Composable
 fun RentalApp(
-    errorHost: ErrorHost
-){
+    messageHost: MessageHost
+) {
     val navController = rememberNavController()
 
     val authViewModel: AuthViewModel = hiltViewModel()
     val sessionStatus = authViewModel.sessionState.collectAsStateWithLifecycle().value
-    val loggedIn = sessionStatus is SessionStatus.Authenticated
 
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(Unit) {
-        errorHost.error.filter { it is Error }.collect { error ->
-            val message = when (val err = error as Error) {
-                is Error.String -> err.msg
-                Error.Unknown -> "Something went wrong"
-            }
+        messageHost.msg.collect { msg ->
+
+            val message =
+                when (msg) {
+                    is Error -> when (msg) {
+                        is Error.String -> msg.msg
+                        Error.Unknown -> "Something went wrong"
+                    }
+
+                    is Success -> when (msg) {
+                        is Success.String -> msg.msg
+                    }
+                }
+
+
             snackbarHostState.showSnackbar(
                 message = message,
                 duration = SnackbarDuration.Short
@@ -53,41 +59,55 @@ fun RentalApp(
         }
     }
 
+    // セッションによる自動遷移
+    LaunchedEffect(sessionStatus) {
+        when (sessionStatus) {
+            SessionStatus.Initializing -> Unit
+            is SessionStatus.RefreshFailure -> navController.navigate(ErrorScreen)
+            is SessionStatus.Authenticated -> navController.navigate(HomeScreen)
+            is SessionStatus.NotAuthenticated -> navController.navigate(LoginScreen)
+        }
+    }
+
     Scaffold(
-        snackbarHost ={ SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         NavHost(
             modifier = Modifier.padding(paddingValues),
             navController = navController,
-            startDestination = if(!loggedIn) Login else Home
-        ){
-            composable<Login> {
+            startDestination = LoadingScreen
+        ) {
+            composable<LoadingScreen> {
+                LoadingScreen()
+            }
+
+            composable<ErrorScreen> {
+                ErrorScreen()
+            }
+
+            composable<LoginScreen> {
                 LoginScreen(
                     login = authViewModel::signIn,
                     navigateToSignUp = {
-                        navController.navigate(SignUp)
+                        navController.navigate(SignUpScreen)
                     }
                 )
-
-                LaunchedEffect(loggedIn) {
-                    if (loggedIn) {
-                        navController.navigate(Home) {
-                            popUpTo(Login) { inclusive = true }
-                        }
-                    }
-                }
             }
-            composable<SignUp> {
+            composable<SignUpScreen> {
                 SignUpScreen(
                     signUp = authViewModel::signUp
                 )
             }
 
-            composable<Home> {
+            composable<HomeScreen> {
                 val viewModel: HomeScreenViewModel = hiltViewModel()
 
                 val state = viewModel.state.collectAsStateWithLifecycle().value
-                HomeScreen(state)
+                HomeScreen(
+                    state = state,
+                    onRefresh = {
+                        viewModel.refresh()
+                    })
             }
         }
     }

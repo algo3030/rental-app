@@ -3,7 +3,6 @@ package com.example.rentalapp.ui.screen.auth
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,15 +20,12 @@ import androidx.compose.ui.unit.dp
 import com.example.rentalapp.ui.designsystem.AppTheme
 import com.example.rentalapp.ui.designsystem.components.Button
 import com.example.rentalapp.ui.designsystem.components.ButtonVariant
-import com.example.rentalapp.ui.designsystem.components.Icon
-import com.example.rentalapp.ui.designsystem.components.IconButton
 import com.example.rentalapp.ui.designsystem.components.Text
 import com.example.rentalapp.ui.designsystem.components.textfield.OutlinedTextField
-import com.example.rentalapp.ui.designsystem.components.textfield.TextField
 import kotlinx.serialization.Serializable
 
 @Serializable
-object SignUp
+object SignUpScreen
 
 @Composable
 fun SignUpScreen(
